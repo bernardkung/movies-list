@@ -1,6 +1,6 @@
 # Movie Lists
 
-bernardkung.github.io/movies-list
+[bernardkung.github.io/movies-list](https://bernardkung.github.io/movies-list)
 
 Remaking AFI's top 100 movies sites. Just a movie checklist.
 
