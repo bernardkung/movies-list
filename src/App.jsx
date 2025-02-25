@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react'
+import { CookiesProvider, useCookies } from 'react-cookie'
 import './App.css'
 import movies from './afi_list.json'
 
 
 function App() {
   const [watched, setWatched] = useState(0)
+  const [cookies, setCookie] = useCookies([])
+
 
   const onClick = (e)=>{
     if(e.target.checked){
