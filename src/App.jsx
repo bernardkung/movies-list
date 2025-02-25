@@ -5,7 +5,6 @@ import movies from './afi_list.json'
 
 
 function App() {
-  const [watchList,setWatchList] = useState([])
   const [cookies, setCookie] = useCookies(['watched'])
 
   function updateList(item, list) {
@@ -22,7 +21,6 @@ function App() {
   const onClick = (e)=>{
     const uList = updateList(e.target.value, cookies.watched)
     updateCookie(uList)
-    setWatchList(uList)
   }
 
 
