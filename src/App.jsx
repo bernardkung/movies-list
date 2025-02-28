@@ -24,6 +24,11 @@ function App() {
     setWatchList(uList)
   }
 
+  function onSubmit (e) {
+    e.preventDefault()
+    console.log(e.target.id)
+  }
+
   useEffect(()=>{
     // Update cookie
     updateCookie(watchList)
@@ -69,9 +74,32 @@ function App() {
         <span className={'counter'}>{ watchList.length }</span> 
         <span className={'title'}>AFI Top 100 Movies</span>
       </div>
+
       <ul>
         {movieList}
       </ul>
+
+      <form className={'consentForm'}>
+        <p>This site uses a cookie to retain progress between visits, no other data is tracked. No data is shared.</p>
+        <div className={'buttonBar'}>
+          <button 
+            className={'acceptButton'} 
+            id={'acceptButton'} 
+            onClick={onSubmit}
+          >
+            Accept Cookie
+          </button>
+          <button 
+            className={'rejectButton'} 
+            id={'acceptButton'} 
+            onClick={onSubmit}
+          >
+            Reject Cookie
+          </button>
+
+        </div>
+      </form>
+
       <div className="header">
         <span className={'counter'}>{ watchList.length }</span> 
         <span className={'title'}>AFI Top 100 Movies</span>

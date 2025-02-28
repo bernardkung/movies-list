@@ -8,8 +8,9 @@
 .header{
   height: 60px;
   padding: 0;
-  margin: 0;
+  margin: 10px auto;
   font-size: 20px;
+  width: 100%;
   display: flex;
   flex-flow: row;
   justify-content: center;
@@ -29,12 +30,14 @@
 
 ul {
   list-style-type: none;
-  margin: 20px auto;
-  padding: 20px auto;
   display: flex;
   flex-flow: column;
   justify-content: flex-start;
   align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 10px auto;
+  padding: 10px 30px;
   background-color: #1f1f1f;
   border-radius: 8px;
   filter: drop-shadow(5px 5px 10px #0c0c0c);
@@ -50,6 +53,8 @@ li {
 }
 
 input[type="checkbox"] {
+  min-width: 25px;
+  min-height: 25px;
   width: 25px;
   height: 25px;
   margin-right: 20px;
@@ -64,4 +69,35 @@ label{
 
 span {
   margin: auto 5px;
+}
+
+.consentForm {
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-start;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 10px auto;
+  padding: 10px 25px;
+  border-radius: 8px 8px 0 0;
+  background-color: #1f1f1f;
+  filter: drop-shadow(5px 5px 10px #0c0c0c);
+}
+
+.buttonBar {
+  display: flex;
+  flex-flow: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.acceptButton {
+  background-color: #60c452;
+  margin: 5px;
+}
+
+.rejectButton {
+  background-color: #a33f3f;
+  margin: 5px;
 }
