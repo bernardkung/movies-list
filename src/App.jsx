@@ -6,6 +6,7 @@ import movies from './afi_list.json'
 
 function App() {
   const [cookies, setCookie] = useCookies(['watched'])
+  const [watchList, setWatchList] = useState([])
 
   function updateList(item, list) {
     if (list.includes(item)) {
@@ -19,14 +20,21 @@ function App() {
   }
 
   const onClick = (e)=>{
-    const uList = updateList(e.target.value, cookies.watched)
-    updateCookie(uList)
+    const uList = updateList(e.target.value, watchList)
+    setWatchList(uList)
   }
 
+  useEffect(()=>{
+    // Update cookie
+    updateCookie(watchList)
+  }, [watchList])
 
   useEffect(()=>{
-    // console.log('cookie')
-  }, [cookies])
+    // Initialize watchList
+    if (cookies.watched) {
+      setWatchList(cookies.watched)
+    }
+  }, [])
 
   const movieList = movies.map((movie, m)=>{
     const inputKey = `${m}`
@@ -40,7 +48,7 @@ function App() {
             key={inputKey}
             onChange={onClick}
             value={movie['rank']}
-            checked={cookies.watched.includes(movie['rank'].toString())}
+            checked={watchList.includes(movie['rank'].toString())}
             // checked={true}
           />
           <label 
@@ -58,14 +66,14 @@ function App() {
   return (
     <>
       <div className="header">
-        <span className={'counter'}>{ cookies.watched.length }</span> 
+        <span className={'counter'}>{ watchList.length }</span> 
         <span className={'title'}>AFI Top 100 Movies</span>
       </div>
       <ul>
         {movieList}
       </ul>
       <div className="header">
-        <span className={'counter'}>{ cookies.watched.length }</span> 
+        <span className={'counter'}>{ watchList.length }</span> 
         <span className={'title'}>AFI Top 100 Movies</span>
       </div>
     </>
