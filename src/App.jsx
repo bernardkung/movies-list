@@ -5,8 +5,11 @@ import movies from './afi_list.json'
 
 
 function App() {
-  const [cookies, setCookie] = useCookies(['watched'])
   const [watchList, setWatchList] = useState([])
+  const [cookies, setCookie, removeCookie] = useCookies([])
+  const [consent, setConsent] = useState(false)
+  const [showConsent, setShowConsent] = useState(true)
+
 
   function updateList(item, list) {
     if (list.includes(item)) {
@@ -16,23 +19,43 @@ function App() {
   }
 
   function updateCookie (watched) {
-    setCookie('watched', watched, { path: '/' })
+    if (consent) {
+      setCookie('watched', watched, { path: '/' })
+    }
   }
 
-  const onClick = (e)=>{
+  function updateConsentCookie (consented) {
+    if (consented) {
+      setCookie('consented', consented, { path: '/'})
+    }
+  }
+
+  const onChange = (e)=>{
     const uList = updateList(e.target.value, watchList)
     setWatchList(uList)
   }
 
-  function onSubmit (e) {
+  function onClick (e) {
     e.preventDefault()
-    console.log(e.target.id)
+    if (e.target.id==="acceptButton") {
+      setConsent(true)
+    }
+    setShowConsent(false)
   }
 
   useEffect(()=>{
-    // Update cookie
+    // Update watch cookie
     updateCookie(watchList)
   }, [watchList])
+
+  useEffect(()=>{
+    if (!consent) {
+      removeCookie('watched')
+      removeCookie('consented')
+    }
+    updateCookie(watchList)
+    updateConsentCookie(consent)
+  }, [consent])
 
   useEffect(()=>{
     // Initialize watchList
@@ -51,7 +74,7 @@ function App() {
             id={inputKey}
             name={inputKey}
             key={inputKey}
-            onChange={onClick}
+            onChange={onChange}
             value={movie['rank']}
             checked={watchList.includes(movie['rank'].toString())}
             // checked={true}
@@ -70,6 +93,7 @@ function App() {
 
   return (
     <>
+
       <div className="header">
         <span className={'counter'}>{ watchList.length }</span> 
         <span className={'title'}>AFI Top 100 Movies</span>
@@ -79,31 +103,32 @@ function App() {
         {movieList}
       </ul>
 
-      <form className={'consentForm'}>
+      <form className={`consentForm ${showConsent && !consent ? '' : 'hidden'}`}>
         <p>This site uses a cookie to retain progress between visits, no other data is tracked. No data is shared.</p>
         <div className={'buttonBar'}>
           <button 
             className={'acceptButton'} 
             id={'acceptButton'} 
-            onClick={onSubmit}
+            onClick={onClick}
           >
             Accept Cookie
           </button>
           <button 
             className={'rejectButton'} 
             id={'acceptButton'} 
-            onClick={onSubmit}
+            onClick={onClick}
           >
             Reject Cookie
           </button>
-
         </div>
       </form>
 
-      <div className="header">
-        <span className={'counter'}>{ watchList.length }</span> 
-        <span className={'title'}>AFI Top 100 Movies</span>
+      <div className={'footer'}>
+        <p>Built by <a href='https://bernardkung.github.io/'>Bernard Kung</a></p>
+        <p>Icons are open-source <a href="https://www.iconshock.com/freeicons/collection/primeicons">primeicons</a> from Iconshock</p>
       </div>
+
+
     </>
   )
 }

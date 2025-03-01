@@ -6,17 +6,26 @@
 }
 
 .header{
-  height: 60px;
-  padding: 0;
-  margin: 10px auto;
-  font-size: 20px;
-  width: 100%;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  box-sizing: border-box;
+  min-width: 500px;
+  width: 80%;
+  max-width: 1280px;
+  z-index: 4;
+  margin: 0 auto;
+  padding: 10px 25px;
+
   display: flex;
   flex-flow: row;
   justify-content: center;
   align-items: center;
+
+  border-radius: 0 0 8px 8px;
   background-color: #1f1f1f;
-  border-radius: 8px;
   filter: drop-shadow(5px 5px 10px #0c0c0c);
 }
 
@@ -34,10 +43,15 @@ ul {
   flex-flow: column;
   justify-content: flex-start;
   align-items: center;
+
+  
   box-sizing: border-box;
-  width: 100%;
-  margin: 10px auto;
+  min-width: 500px;
+  width: 80%;
+  max-width: 1280px;
+  margin: 80px auto 40px;
   padding: 10px 30px;
+
   background-color: #1f1f1f;
   border-radius: 8px;
   filter: drop-shadow(5px 5px 10px #0c0c0c);
@@ -50,6 +64,13 @@ li {
   justify-content: flex-start;
   align-items: center;
   width: 100%;
+}
+
+.hidden {
+  display: none; 
+  visibility: hidden;
+  height: 0;
+  width: 0;
 }
 
 input[type="checkbox"] {
@@ -76,10 +97,19 @@ span {
   flex-flow: column;
   justify-content: flex-start;
   align-items: center;
+
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   box-sizing: border-box;
-  width: 100%;
-  margin: 10px auto;
+  min-width: 500px;
+  width: 80%;
+  max-width: 1280px;
+  z-index: 4;
+  margin: 0 auto;
   padding: 10px 25px;
+  
   border-radius: 8px 8px 0 0;
   background-color: #1f1f1f;
   filter: drop-shadow(5px 5px 10px #0c0c0c);
@@ -100,4 +130,8 @@ span {
 .rejectButton {
   background-color: #a33f3f;
   margin: 5px;
+}
+
+.footer {
+  font-size: 14px;
 }
