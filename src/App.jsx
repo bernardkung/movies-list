@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { CookiesProvider, useCookies } from 'react-cookie'
 import './App.css'
 import movies from './afi_list.json'
+import cogIcon from './assets/icons/sliders.svg'
 
 
 function App() {
@@ -9,8 +10,9 @@ function App() {
   const [cookies, setCookie, removeCookie] = useCookies([])
   const [consent, setConsent] = useState(false)
   const [showConsent, setShowConsent] = useState(true)
+  const [showSettings, setShowSettings] = useState(false)
 
-
+  ////// FUNCTIONS
   function updateList(item, list) {
     if (list.includes(item)) {
       return list.filter(i => i != item)
@@ -18,34 +20,60 @@ function App() {
     return [...list, item]
   }
 
-  function updateCookie (watched) {
+  function updateWatchedCookie (watched) {
     if (consent) {
       setCookie('watched', watched, { path: '/' })
     }
   }
 
+  function destroyAllCookies() {
+    console.log('d')
+    removeCookie('watched')
+    // removeCookie('consented')
+    removeCookie('consented', { path: '/' })
+  }
+
   function updateConsentCookie (consented) {
     if (consented) {
       setCookie('consented', consented, { path: '/'})
+    } else {
+      destroyAllCookies()
     }
   }
 
-  const onChange = (e)=>{
+  ////// LISTENERS
+  function onChange (e) {
     const uList = updateList(e.target.value, watchList)
     setWatchList(uList)
   }
 
-  function onClick (e) {
+  function onButtonClick (e) {
     e.preventDefault()
-    if (e.target.id==="acceptButton") {
-      setConsent(true)
-    }
     setShowConsent(false)
+    if (e.target.value) {
+      setConsent(true)
+    } else {
+      destroyAllCookies()
+    }
   }
 
+  function onToggle(e) {
+    // If consent setting set directly from settings while ignoring bottom popup
+    if (showConsent) {
+      setShowConsent(false)
+    }
+    // Toggle consent
+    setConsent(!consent)
+  }
+
+  function toggleSettings (e) {
+    setShowSettings(!showSettings)
+  }
+
+  ////// EFFECTS
   useEffect(()=>{
     // Update watch cookie
-    updateCookie(watchList)
+    updateWatchedCookie(watchList)
   }, [watchList])
 
   useEffect(()=>{
@@ -53,17 +81,25 @@ function App() {
       removeCookie('watched')
       removeCookie('consented')
     }
-    updateCookie(watchList)
+    updateWatchedCookie(watchList)
     updateConsentCookie(consent)
   }, [consent])
 
   useEffect(()=>{
+    console.log(cookies.watched, cookies.consented, typeof(cookies.consented))
     // Initialize watchList
     if (cookies.watched) {
       setWatchList(cookies.watched)
     }
+    // If consented does not exist, implies first visit, show popup
+    if (typeof(cookies.consented) === 'undefined') {
+      setShowConsent(true)
+    } else {
+      setConsent(cookies.consented)
+    }
   }, [])
 
+  ////// DIVS
   const movieList = movies.map((movie, m)=>{
     const inputKey = `${m}`
     return (
@@ -74,12 +110,13 @@ function App() {
             id={inputKey}
             name={inputKey}
             key={inputKey}
+            className={'movieCheckbox'}
             onChange={onChange}
             value={movie['rank']}
             checked={watchList.includes(movie['rank'].toString())}
-            // checked={true}
           />
           <label 
+            className={'movieLabel'}
             htmlFor={inputKey}
             key={`l${m}`}
           >
@@ -91,32 +128,52 @@ function App() {
     )
   })
 
+  
+  ////// MAIN
   return (
     <>
 
-      <div className="header">
+      <div className={'header'}>
         <span className={'counter'}>{ watchList.length }</span> 
         <span className={'title'}>AFI Top 100 Movies</span>
+        <img className={'settingsIcon'} src={cogIcon} onClick={toggleSettings}/>
+      </div>
+
+      <div className={`settings ${showSettings ? '' : 'hidden'}`}>
+        <span className={'settingsSpan'}>
+          <label htmlFor={'cookieSettings'} >
+            Accept Cookies
+          </label>
+          <input 
+            name={'cookieSettings'} 
+            type={'checkbox'} 
+            checked={consent}
+            value={consent}
+            onChange={onToggle}
+          />
+        </span>
       </div>
 
       <ul>
         {movieList}
       </ul>
 
-      <form className={`consentForm ${showConsent && !consent ? '' : 'hidden'}`}>
+      <form className={`consentForm ${!showConsent ? 'hidden' : ''}`}>
         <p>This site uses a cookie to retain progress between visits, no other data is tracked. No data is shared.</p>
         <div className={'buttonBar'}>
           <button 
             className={'acceptButton'} 
             id={'acceptButton'} 
-            onClick={onClick}
+            value={true}
+            onClick={onButtonClick}
           >
             Accept Cookie
           </button>
           <button 
             className={'rejectButton'} 
-            id={'acceptButton'} 
-            onClick={onClick}
+            id={'rejectButton'} 
+            value={false}
+            onClick={onButtonClick}
           >
             Reject Cookie
           </button>
