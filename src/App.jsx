@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { CookiesProvider, useCookies } from 'react-cookie'
+import Cookies from 'js-cookie';
 import './App.css'
 import movies from './afi_list.json'
 import cogIcon from './assets/icons/sliders.svg'
@@ -7,38 +7,34 @@ import cogIcon from './assets/icons/sliders.svg'
 
 function App() {
   const [watchList, setWatchList] = useState([])
-  const [cookies, setCookie, removeCookie] = useCookies([])
   const [consent, setConsent] = useState(false)
   const [showConsent, setShowConsent] = useState(true)
   const [showSettings, setShowSettings] = useState(false)
-
+  
   ////// FUNCTIONS
   function updateList(item, list) {
+    console.log(item, list)
     if (list.includes(item)) {
       return list.filter(i => i != item)
     }
     return [...list, item]
   }
 
-  function updateWatchedCookie (watched) {
+  function updateWatchedCookie () {
     if (consent) {
-      setCookie('watched', watched, { path: '/' })
+      Cookies.set('watched', watchList)
     }
   }
 
   function destroyAllCookies() {
-    console.log('d')
-    removeCookie('watched')
-    // removeCookie('consented')
-    removeCookie('consented', { path: '/' })
+    Cookies.remove('consented')
+    Cookies.remove('watched')
   }
 
-  function updateConsentCookie (consented) {
-    if (consented) {
-      setCookie('consented', consented, { path: '/'})
-    } else {
-      destroyAllCookies()
-    }
+  function updateConsentCookie () {
+    if (consent) {
+      Cookies.set('consented', consent)
+    } 
   }
 
   ////// LISTENERS
@@ -52,9 +48,7 @@ function App() {
     setShowConsent(false)
     if (e.target.value) {
       setConsent(true)
-    } else {
-      destroyAllCookies()
-    }
+    } 
   }
 
   function onToggle(e) {
@@ -72,59 +66,57 @@ function App() {
 
   ////// EFFECTS
   useEffect(()=>{
-    // Update watch cookie
-    updateWatchedCookie(watchList)
+    // Update watch cookie\
+    updateWatchedCookie()
   }, [watchList])
 
-  useEffect(()=>{
-    if (!consent) {
-      removeCookie('watched')
-      removeCookie('consented')
-    }
-    updateWatchedCookie(watchList)
-    updateConsentCookie(consent)
-  }, [consent])
+  // useEffect(()=>{
+  //   console.log('consent effect', consent)
+  //   if (!consent) {
+  //     destroyAllCookies()
+  //   }
+  //   updateWatchedCookie()
+  //   updateConsentCookie()
+  // }, [consent])
 
   useEffect(()=>{
-    console.log(cookies.watched, cookies.consented, typeof(cookies.consented))
+    const allCookies = Cookies.get()
+    console.log('all:', allCookies)
     // Initialize watchList
-    if (cookies.watched) {
-      setWatchList(cookies.watched)
+    if (Cookies.get('watched')) {
+      setWatchList(Cookies.get('watched'))
     }
-    // If consented does not exist, implies first visit, show popup
-    if (typeof(cookies.consented) === 'undefined') {
+    // If not consented, show popup
+    if (!Cookies.get('consented')) {
       setShowConsent(true)
-    } else {
-      setConsent(cookies.consented)
     }
   }, [])
+
 
   ////// DIVS
   const movieList = movies.map((movie, m)=>{
     const inputKey = `${m}`
     return (
-      <CookiesProvider key={`c${m}`}>
-        <li key={`m${m}`}>
-          <input 
-            type="checkbox" 
-            id={inputKey}
-            name={inputKey}
-            key={inputKey}
-            className={'movieCheckbox'}
-            onChange={onChange}
-            value={movie['rank']}
-            checked={watchList.includes(movie['rank'].toString())}
-          />
-          <label 
-            className={'movieLabel'}
-            htmlFor={inputKey}
-            key={`l${m}`}
-          >
-            <span key={`r${m}`}>{movie.rank}.</span>
-            <span key={`t${m}`}>{movie.title}</span> 
-          </label>
-        </li>
-      </CookiesProvider>
+      <li key={`m${m}`}>
+        <input 
+          type="checkbox" 
+          id={inputKey}
+          name={inputKey}
+          key={inputKey}
+          className={'movieCheckbox'}
+          onChange={onChange}
+          value={movie['rank']}
+          checked={watchList.includes(movie['rank'].toString())}
+        />
+        <label 
+          className={'movieLabel'}
+          htmlFor={inputKey}
+          key={`l${m}`}
+        >
+          <span key={`r${m}`}>{movie.rank}.</span>
+          <span key={`t${m}`}>{movie.title}</span> 
+        </label>
+      </li>
     )
   })
 
